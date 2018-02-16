@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+.input{
+    border:solid 1px #333333;
+    width: 200px;padding:8px;border-radius: 5px;
+
+}
+.submit{
+    border:solid 1px #333333;
+    background:skyblue;padding:8px;
+}
