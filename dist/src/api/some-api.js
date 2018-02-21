@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("@sakuraapi/api");
 exports.SakuraApi = api_1.SakuraApi;
-const auth_audience_1 = require("@sakuraapi/auth-audience");
 const bcrypt_1 = require("bcrypt");
 const crypto = require("crypto");
 const some_model_1 = require("../models/some-model");
@@ -70,7 +69,6 @@ __decorate([
 ], SomeApi.prototype, "registerRoute", null);
 SomeApi = __decorate([
     api_1.Routable({
-        authenticator: auth_audience_1.AuthAudience,
         baseUrl: 'users',
         model: some_model_1.SomeModel,
         suppressApi: true

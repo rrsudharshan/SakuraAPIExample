@@ -18,7 +18,6 @@ export {SakuraApi};
 import {dbs}        from '../config/bootstrap/db';
 
 @Routable({
-  authenticator: AuthAudience,
   baseUrl: 'users',
   model: SomeModel,
   suppressApi: true

@@ -16,9 +16,9 @@
     "test:db": "scripts/test:db.sh"
   },
   "dependencies": {
-    "@sakuraapi/api": "0.8.0",
-    "@sakuraapi/auth-audience": "^0.3.2",
-    "@sakuraapi/auth-native-authority": "^0.3.0-14",
+    "@sakuraapi/api": "0.8.1",
+    "@sakuraapi/auth-audience": "0.3.1",
+    "@sakuraapi/auth-native-authority": "0.3.0-13",
     "@sakuraapi/core": "^0.10.0",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.1",

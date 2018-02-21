@@ -15,11 +15,12 @@ const body_parser_1 = require("body-parser");
 const cors = require("cors");
 const debugInit = require("debug");
 const helmet = require("helmet");
-const some_api_1 = require("./api/some-api");
 const config_api_1 = require("./api/config.api");
+const some_api_1 = require("./api/some-api");
 const bootstrap_indexes_1 = require("./config/bootstrap/bootstrap-indexes");
 const db_1 = require("./config/bootstrap/db");
 const some_model_1 = require("./models/some-model");
+const log_service_1 = require("./services/log-service");
 const debug = debugInit('profile:sakuraApi');
 class Bootstrap {
     constructor() {
@@ -45,22 +46,34 @@ class Bootstrap {
                         plugin: lib_1.addAuthAudience
                     }
                 ],
-                providers: [],
+                providers: [
+                    log_service_1.LogService
+                ],
                 routables: [
                     config_api_1.ConfigApi,
                     some_api_1.SomeApi
                 ]
             });
+            this.log = this.sapi.getProvider(log_service_1.LogService);
+            debug('configuring email services');
+            debug('adding middleware');
             this.sapi.addMiddleware(cors(this.sapi.config.cors));
             this.sapi.addMiddleware(helmet());
             this.sapi.addMiddleware(body_parser_1.json());
             if (this.sapi.config.TRACE_REQ === 'true') {
                 this.sapi.addMiddleware((req, res, next) => {
+                    this.log.info({
+                        body: req.body,
+                        method: req.method,
+                        originalUrl: req.originalUrl,
+                        url: req.url
+                    });
                     next();
                 });
             }
             const wait = [];
             yield this.sapi.dbConnections.connectAll();
+            debug('bootstrapping indexes');
             wait.push(yield new bootstrap_indexes_1.BootstrapIndexes(this.sapi).run());
             yield Promise.all(wait);
             process.once('SIGINT', () => this.shutdownServer.call(this, 'SIGINT'));
@@ -72,12 +85,16 @@ class Bootstrap {
         });
     }
     authNativeAuthorityOptions() {
+        console.log('authsss....');
         return {
             authDbConfig: db_1.dbs.authentication,
             authenticator: lib_1.AuthAudience,
             defaultDomain: 'default',
             endpoints: { create: 'users' },
+            onBeforeUserCreate: this.onBeforeUserCreate.bind(this),
+            onChangePasswordEmailRequest: this.onChangePasswordEmailRequest.bind(this),
             onForgotPasswordEmailRequest: this.onForgotPasswordEmailRequest.bind(this),
+            onInjectCustomToken,
             onLoginSuccess: this.onLoginSuccess.bind(this),
             onResendEmailConfirmation: this.onResendEmailConfirmation.bind(this),
             onUserCreated: this.onUserCreated.bind(this),
@@ -89,29 +106,35 @@ class Bootstrap {
     }
     onBeforeUserCreate(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('onBeforeUserCreate called');
+            next();
         });
     }
     onChangePasswordEmailRequest(user, req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('onChangePasswordEmailRequest');
         });
     }
     onForgotPasswordEmailRequest(user, token, req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('onForgotPasswordEmailRequest');
         });
     }
     onLoginSuccess(user, jwt, sa, req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            debug('onLoginSuccess called');
+            console.log('onForgotPasswordEmailRequest');
         });
     }
     onResendEmailConfirmation(user, token, req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            debug('onResendEmailConfirmation called');
+            console.log(token);
+            console.log('onResendEmailConfirmation');
         });
     }
     onUserCreated(user, token, req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            debug('onUserCreated called');
+            console.log(token);
+            console.log('onResendEmailConfirmation');
         });
     }
     onUserCreatedSendWelcomeEmail(user, token, req, res) {
@@ -125,6 +148,11 @@ class Bootstrap {
                 return;
             }
             this.shuttingDown = true;
+            this.log.info(`Shutting down Donation Server (signal: ${signal})`);
+            yield this.sapi
+                .close()
+                .catch((err) => this.log.error('Unable to shutdown SakuraApi', err));
+            this.log.info('And now his watch is ended');
             process.exit(0);
         });
     }
