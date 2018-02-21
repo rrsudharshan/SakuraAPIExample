@@ -163,7 +163,7 @@
   "npm_config_global_style": "",
   "npm_execpath": "/Users/sudharshan/.nvm/versions/node/v8.6.0/lib/node_modules/npm/bin/npm-cli.js",
   "npm_config_cafile": "",
-  "npm_package_author_name": "simhachalam",
+  "npm_package_author_name": "sudhar",
   "npm_package_dependencies_cors": "^2.8.3",
   "npm_package_devDependencies__types_supertest": "^2.0.0",
   "npm_config_heading": "npm",

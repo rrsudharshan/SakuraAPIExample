@@ -2,7 +2,7 @@
   "name": "recentauth",
   "version": "0.0.0",
   "description": "SakuraApi Awesome Sauce",
-  "author": "simhachalam",
+  "author": "suhda",
   "license": "UNLICENSED",
   "scripts": {
     "build": "scripts/build.sh",
